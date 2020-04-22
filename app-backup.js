@@ -2,27 +2,20 @@ const rollDiceBtn = document.getElementsByClassName("btn-roll")[0];
 const dice = document.getElementById("dice");
 const newBtn = document.getElementsByClassName("btn-new")[0];
 const holdBtn = document.getElementsByClassName("btn-hold")[0];
-const finalScore = document.getElementsByClassName("final-score")[0];
 
-let playerNumber, roundTotal, winningScore;
+let playerNumber, roundTotal;
 let playerScores = [0, 0];
 let gamePlaying = false;
+
 startGame();
 newBtn.addEventListener("click", startGame);
-
-let lastDice;
 
 rollDiceBtn.addEventListener("click", (e) => {
   if (e.target.className == "btn-roll" && gamePlaying) {
     dice.style.display = "block";
     const diceNum = generateRandomNum();
     dice.src = `dice-${diceNum}.png`;
-
-    if (lastDice === 4 && diceNum === 4) {
-      playerScores[playerNumber] = 0; //player loses the score
-      document.querySelector(`#score-${playerNumber}`).textContent = 0;
-      nextPlayer();
-    } else if (diceNum !== 1) {
+    if (diceNum !== 1) {
       roundTotal += diceNum;
       document.getElementById(
         `current-${playerNumber}`
@@ -30,13 +23,12 @@ rollDiceBtn.addEventListener("click", (e) => {
     } else {
       nextPlayer();
     }
-    lastDice = diceNum;
   }
 });
 
 function nextPlayer() {
   document.getElementById(`current-${playerNumber}`).textContent = 0;
-  //   dice.style.display = "none";
+  dice.style.display = "none";
   roundTotal = 0;
   playerNumber === 0 ? (playerNumber = 1) : (playerNumber = 0);
   document.querySelector(`.player-0-panel`).classList.toggle("active");
@@ -45,16 +37,11 @@ function nextPlayer() {
 
 holdBtn.addEventListener("click", (e) => {
   if (e.target.className == "btn-hold" && gamePlaying) {
-    if (finalScore.value) {
-      winningScore = finalScore.value;
-    } else {
-      winningScore = 10;
-    }
     const score = document.getElementById(`score-${playerNumber}`);
     // score.textContent = roundTotal;
     playerScores[playerNumber] += roundTotal;
     score.textContent = playerScores[playerNumber];
-    checkWinner(winningScore);
+    checkWinner();
   }
 });
 
@@ -68,7 +55,6 @@ function startGame() {
   playerNumber = 0;
   roundTotal = 0;
   playerScores = [0, 0];
-  finalScore.value = 10;
   document.getElementById("current-0").textContent = 0;
   document.getElementById("current-1").textContent = 0;
   document.getElementById("score-0").textContent = 0;
@@ -83,8 +69,8 @@ function startGame() {
   dice.style.display = "none";
 }
 
-function checkWinner(score) {
-  if (playerScores[playerNumber] >= score) {
+function checkWinner() {
+  if (playerScores[playerNumber] >= 30) {
     gamePlaying = false;
     document.querySelector(`#name-${playerNumber}`).textContent = "WINNER";
     document
